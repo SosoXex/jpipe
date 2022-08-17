@@ -1,0 +1,30 @@
+pipeline{
+    agent build
+    stages{
+        stage('git'){
+            steps{
+                git 'https://github.com/SosoXex/jpipe.git'
+            }
+        }
+        stage('build builder'){
+            steps{
+                sh 'cd jpipe && ls -la && docker build -t appbuilder:v4.0 .'
+            }
+        }
+        stage('prepare'){
+            steps{
+                sh 'export dhpass="1234Jenkins" &&  export dhhost="172.31.23.200:8123" && export dhuser="jenkins"'
+            }
+        }
+        stage('build app'){
+            steps{
+                sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -ti appbuilder:v4.0 /bin/bash -c "git clone https://github.com/koddas/war-web-project.git;mvn package -f /tmp/build/war-web-project;docker build -t sapp:v.0 .;docker login $dhhost -u $dhuser -p $dhpass;docker tag sapp:v.0 $dhhost/sapp:v.0;docker push $dhhost/sapp:v.0"'
+            }
+        }
+    }
+}
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -ti appbuilder:v4.0 /bin/bash -c \
+"git clone https://github.com/koddas/war-web-project.git;\
+mvn package -f /tmp/build/war-web-project;\
+docker build -t sapp:v.0 .;docker login $dhhost -u $dhuser -p $dhpass;\
+docker tag sapp:v.0 $dhhost/sapp:v.0;docker push $dhhost/sapp:v.0"
