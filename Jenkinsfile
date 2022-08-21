@@ -3,7 +3,7 @@ pipeline{
     stages{
         stage('build app'){
             steps{
-            sh 'docker rm $(docker ps -aq) -f && docker rmi -f $(docker images -q)'
+            sh 'docker rmi -f appbuilder:v5.0'
             sh 'rm -rf build && mkdir -p build'
             sh 'git clone https://github.com/SosoXex/jpipe.git build'
             sh 'cd build && docker build -t appbuilder:v5.0 .'
