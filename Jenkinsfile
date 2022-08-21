@@ -19,8 +19,8 @@ pipeline{
             steps{
                     sh 'export dhhost=\'172.31.23.200:8123\'&& export dhuser=\'jenkins\''
                     sh 'rm -rf war-web-project && git clone https://github.com/koddas/war-web-project.git'
-                    sh 'pwd && ls -la'
-                    sh 'mvn package -f $PWD/war-web-project && docker build -t sappj:v1.0 .'
+                    sh 'mvn package -f $PWD/war-web-project'
+                    sh 'docker build -t sappj:v1.0 .'
                     sh 'docker login $dhhost -u $dhuser -p $dhpass'
                     sh 'docker tag sappj:v1.0 $dhhost/sappj:v1.0'
                     sh 'docker push $dhhost/sappj:v1.0"'
